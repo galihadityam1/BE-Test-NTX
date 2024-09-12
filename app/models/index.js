@@ -1,7 +1,9 @@
 const config = require("../config/db");
 
 const Sequelize = require("sequelize");
-const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
+
+// change NTX when do test to NTX_test
+const sequelize = new Sequelize('NTX_test' , config.USER, config.PASSWORD, {
   host: config.HOST,
   dialect: config.dialect,
   operatorsAliases: false,
@@ -18,6 +20,21 @@ const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
+
+db.user = require("./User")(sequelize, Sequelize);
+db.survey = require("./Survey")(sequelize, Sequelize);
+db.attacks = require('./Attack')(sequelize, Sequelize);
+
+db.user.hasMany(db.survey, {
+  foreignKey: "userId",
+  as: "surveys",
+});
+
+db.survey.belongsTo(db.user, {
+  foreignKey: "userId",
+  as: "user",
+});
+
 
 // define model example
 // db.user = require("../models/User")(sequelize, Sequelize);
